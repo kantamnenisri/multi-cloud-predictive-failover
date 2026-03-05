@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  anomaly-detector:
+    image: python:3.10-slim
+    working_dir: /app
+    volumes:
+      - ./src/anomaly-detector:/app
+    command: >
+      bash -c "pip install -r requirements.txt && python predictor.py"
+    ports:
+      - "8001:8001"
+
+  traffic-router:
+    image: golang:1.20
+    working_dir: /app
+    volumes:
+      - ./src/traffic-router:/app
+    command: go run router.go
+    ports:
+      - "8002:8002"
+
+  telemetry-ingester:
+    image: golang:1.20
+    working_dir: /app
+    volumes:
+      - ./src/telemetry-ingester:/app
+    command: go run main.go
+    depends_on:
+      - anomaly-detector
+      - traffic-router
