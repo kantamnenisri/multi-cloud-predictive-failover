@@ -31,43 +31,8 @@ This project utilizes a microservices architecture to decouple telemetry ingesti
 2\. Start the local simulation environment: `docker compose up --build`
 
 
-flowchart TD
-  U[Users / Clients] --> DNS[Global DNS]
-  DNS --> EP[AWS / GCP / Azure active endpoint]
 
-  subgraph Telemetry[Telemetry collection]
-    CW[AWS CloudWatch]
-    GCM[GCP Cloud Monitoring]
-    AM[Azure Monitor]
-    TI[Telemetry Ingester (Go)]
-    CW --> TI
-    GCM --> TI
-    AM --> TI
-  end
-
-  subgraph ML[Prediction]
-    AD[Anomaly Detector (Python/ML)]
-    D{Failure likely?}
-    AD --> D
-  end
-
-  subgraph Routing[Automated routing]
-    TR[Traffic Router (Go)]
-    DNSUPD[Update DNS weights / failover record]
-    TR --> DNSUPD --> DNS
-  end
-
-  TI --> AD
-  D -->|No| KEEP[Keep routing as-is]
-  D -->|Yes| TR
-
-  subgraph IaC[Infrastructure as Code]
-    TF[Terraform modules: cross-cloud networking + security]
-  end
-
-  TF -.deploys/configures.-> TI
-  TF -.deploys/configures.-> AD
-  TF -.deploys/configures.-> TR
-
-
-
+## 💡 Inspiration
+This project is a reference implementation exploring concepts related to 
+multi-cloud reliability engineering. The author holds USPTO patent 
+applications in this domain (US 19/325,718 and US 19/344,864).
