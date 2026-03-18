@@ -41,6 +41,10 @@ func failoverHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/failover", failoverHandler)
+	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
 	
 	fmt.Println("Traffic Router listening on port 8002...")
 	log.Fatal(http.ListenAndServe(":8002", nil))
